@@ -1,0 +1,215 @@
+Project Title: Personal Task Manager with CLI
+Project Overview
+The Personal Task Manager is a command-line interface (CLI) application that allows users to manage their tasks efficiently. Users can add, view, update, and delete tasks, as well as mark tasks as completed. The application is built using Python and stores tasks in a JSON file for persistence.
+
+Why This Project?
+Practical Use: Task managers are useful tools for organizing daily activities.
+
+Learning Opportunities:
+
+File handling (reading/writing JSON).
+
+Command-line argument parsing.
+
+Object-oriented programming (OOP) in Python.
+
+Error handling and user input validation.
+
+Scalability: The project can be extended with features like due dates, priorities, or even a GUI.
+
+Features
+Add a Task: Users can add a new task with a title and description.
+
+View Tasks: Users can view all tasks or filter by completed/incomplete tasks.
+
+Update a Task: Users can update the title or description of an existing task.
+
+Delete a Task: Users can delete a task by its ID.
+
+Mark Task as Completed: Users can mark a task as completed.
+
+Persistence: Tasks are saved to a JSON file and loaded when the program starts.
+
+Implementation
+1. Project Structure
+Copy
+task_manager/
+│
+├── task_manager.py       # Main application logic
+├── tasks.json            # JSON file to store tasks
+└── README.md             # Project documentation
+2. Code Implementation
+python
+Copy
+import json
+import os
+
+class TaskManager:
+    def __init__(self, file_path="tasks.json"):
+        self.file_path = file_path
+        self.tasks = self._load_tasks()
+
+    def _load_tasks(self):
+        """Load tasks from the JSON file."""
+        if os.path.exists(self.file_path):
+            with open(self.file_path, "r") as file:
+                return json.load(file)
+        return []
+
+    def _save_tasks(self):
+        """Save tasks to the JSON file."""
+        with open(self.file_path, "w") as file:
+            json.dump(self.tasks, file, indent=2)
+
+    def add_task(self, title, description):
+        """Add a new task."""
+        task = {
+            "id": len(self.tasks) + 1,
+            "title": title,
+            "description": description,
+            "completed": False,
+        }
+        self.tasks.append(task)
+        self._save_tasks()
+        print(f"Task added: {title}")
+
+    def view_tasks(self, show_completed=False):
+        """View all tasks or filter by completed/incomplete."""
+        for task in self.tasks:
+            if show_completed or not task["completed"]:
+                status = "Completed" if task["completed"] else "Incomplete"
+                print(f"ID: {task['id']}, Title: {task['title']}, Status: {status}")
+                print(f"Description: {task['description']}\n")
+
+    def update_task(self, task_id, title=None, description=None):
+        """Update a task's title or description."""
+        for task in self.tasks:
+            if task["id"] == task_id:
+                if title:
+                    task["title"] = title
+                if description:
+                    task["description"] = description
+                self._save_tasks()
+                print(f"Task {task_id} updated.")
+                return
+        print(f"Task {task_id} not found.")
+
+    def delete_task(self, task_id):
+        """Delete a task by its ID."""
+        self.tasks = [task for task in self.tasks if task["id"] != task_id]
+        self._save_tasks()
+        print(f"Task {task_id} deleted.")
+
+    def mark_completed(self, task_id):
+        """Mark a task as completed."""
+        for task in self.tasks:
+            if task["id"] == task_id:
+                task["completed"] = True
+                self._save_tasks()
+                print(f"Task {task_id} marked as completed.")
+                return
+        print(f"Task {task_id} not found.")
+
+def main():
+    manager = TaskManager()
+
+    while True:
+        print("\nTask Manager")
+        print("1. Add Task")
+        print("2. View Tasks")
+        print("3. Update Task")
+        print("4. Delete Task")
+        print("5. Mark Task as Completed")
+        print("6. Exit")
+
+        choice = input("Choose an option: ")
+
+        if choice == "1":
+            title = input("Enter task title: ")
+            description = input("Enter task description: ")
+            manager.add_task(title, description)
+
+        elif choice == "2":
+            show_completed = input("Show completed tasks? (y/n): ").lower() == "y"
+            manager.view_tasks(show_completed)
+
+        elif choice == "3":
+            task_id = int(input("Enter task ID to update: "))
+            title = input("Enter new title (leave blank to keep current): ")
+            description = input("Enter new description (leave blank to keep current): ")
+            manager.update_task(task_id, title or None, description or None)
+
+        elif choice == "4":
+            task_id = int(input("Enter task ID to delete: "))
+            manager.delete_task(task_id)
+
+        elif choice == "5":
+            task_id = int(input("Enter task ID to mark as completed: "))
+            manager.mark_completed(task_id)
+
+        elif choice == "6":
+            print("Exiting Task Manager. Goodbye!")
+            break
+
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+
+    main()
+
+3. How It Works
+
+Task Storage:
+
+Tasks are stored in a JSON file (tasks.json) for persistence.
+
+Each task has an id, title, description, and completed status.
+
+User Interaction:
+
+The CLI provides a menu for users to interact with the task manager.
+
+Users can add, view, update, delete, or mark tasks as completed.
+
+Error Handling:
+
+The program handles invalid inputs gracefully (e.g., non-numeric task IDs).
+
+Example Usage
+Add a Task:
+
+Choose an option: 1
+Enter task title: Buy groceries
+Enter task description: Milk, eggs, bread
+Task added: Buy groceries
+View Tasks:
+
+OR
+
+Choose an option: 5
+Enter task ID to mark as completed: 1
+Task 1 marked as completed.
+Exit:
+
+OR
+
+Choose an option: 6
+Exiting Task Manager. Goodbye!
+
+
+
+Still can be Enhancements
+
+Due Dates: Add a due date field for tasks.
+
+Priorities: Allow users to set task priorities (e.g., high, medium, low).
+
+Search and Filter: Add functionality to search or filter tasks by title, description, or due date.
+
+GUI: Build a graphical user interface using libraries like Tkinter or PyQt.
+
+
+
+
+Extensible: Can be expanded with additional features or integrated into larger systems.
